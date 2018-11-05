@@ -1,16 +1,17 @@
-# -*- coding: utf-8 -*-
-
+import random
 
 def merge(left, right):
     #array to store the sorted list
     sorted_list = []
     i, j = 0, 0
     while i < len(left) and j < len(right):
-        merge_sort.count += 1
+        merge_sort.compare_cnt += 1
         if left[i] < right[j]:
+            merge_sort.move_cnt += 1
             sorted_list.append(left[i])
             i += 1
         else:
+            merge_sort.move_cnt += 1
             sorted_list.append(right[j])
             j += 1
 
@@ -19,32 +20,42 @@ def merge(left, right):
     return sorted_list
 
 
-def _merge_sort(li):
-    "function to compute merge-sort"
-    if len(li) == 1:
-        return li
+def _merge_sort(A):
+    if len(A) == 1:
+        return A
 
-    middle = len(li) / 2
-    left_li = _merge_sort(li[:middle])
-    right_li = _merge_sort(li[middle:])
-    sorted_list = merge(left_li, right_li)
+    middle = int(len(A) / 2)
+    left_A = _merge_sort(A[:middle])
+    right_A = _merge_sort(A[middle:])
+    sorted_list = merge(left_A, right_A)
     return sorted_list
 
 
 def merge_sort(A, first, last):
-    merge_sort.count = 0
+    merge_sort.compare_cnt = 0
+    merge_sort.move_cnt = 0
+
     SA = _merge_sort(A[first:last])
+    A[first:last] = SA[0:]
     A = A[:first] + SA + A[last:]
-    return A, merge_sort.count
+    return merge_sort.compare_cnt, merge_sort.move_cnt
+
+
+def check_sorted(A):
+    sorted = True
+    for i in range(len(A)-1):
+        if A[i] >= A[i+1]:
+            return False
+    return True
 
 
 if __name__ == "__main__":
-    A = [10, 5, 2, 3, 7, 4, 8, 9, 11, 3, 1, 555,
-         112, 31, 5, 12, 31, 51, 51, 1224, 151, 23, 12, 51, 67, 132451, 24]
+
+    A = list()
+    for i in range(20):
+        A.append(random.randint(-1000, 1000))
     print(A)
-    SA, compare_cnt = merge_sort(A, 0, 11)
+    compare_cnt, move_cnt = merge_sort(A, 0, len(A) - 1)
     print(A)
-    print("Compare Count : {}".format(compare_cnt))
-    print(SA[:5])
-    print(SA[5:11])
-    print(SA[11:])
+    assert(check_sorted(A))
+    print("Compare Count : {} move_cnt : {}".format(compare_cnt, move_cnt))
